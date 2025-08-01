@@ -1,0 +1,65 @@
+﻿@model WebApplication6.ViewModels.DeveloperVm
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+}
+
+@section Styles {
+        <style>
+            .form-container {
+                max-width: 600px;
+                margin: 0 auto;
+                background: #1b2838;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+                color: #c6d4df;
+            }
+
+                .form-container h2 {
+                    color: #66c0f4;
+                    margin-bottom: 20px;
+                }
+
+            label {
+                margin-top: 10px;
+            }
+
+            .btn-primary {
+                margin-top: 15px;
+            }
+        </style>
+}
+
+<div class="form-container mt-5">
+    <h2>Developer Application</h2>
+
+    @if (TempData["Error"] != null)
+    {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+            <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <form asp-action="Apply" method="post">
+        <div class="mb-3">
+            <label for="FullName">Full Name</label>
+            <input asp-for="FullName" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Email">Email</label>
+            <input asp-for="Email" type="email" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Reason">Why do you want to join?</label>
+            <textarea asp-for="Reason" rows="5" class="form-control" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Application</button>
+    </form>
+</div>

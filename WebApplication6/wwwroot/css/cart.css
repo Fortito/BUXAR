@@ -1,0 +1,94 @@
+﻿/* General Styles */
+.h-custom {
+    min-height: calc(100vh - 120px);
+}
+
+/* Card Styles */
+.card {
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+
+.card-img-container {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+}
+
+    .card-img-container img {
+        transition: transform 0.3s ease;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+        .card-img-container img:hover {
+            transform: scale(1.05);
+        }
+
+/* Button Styles */
+.btn-outline-danger {
+    transition: all 0.3s ease;
+}
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+.btn-primary {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Quantity Controls */
+.quantity-control {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.quantity-input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-left: none;
+    border-right: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .h-custom {
+        min-height: auto;
+    }
+}
+
+/* Empty Cart Styles */
+.empty-cart-icon {
+    font-size: 4rem;
+    opacity: 0.2;
+}
+
+/* Checkout Button */
+#checkoutBtn {
+    transition: all 0.3s ease;
+}
+
+    #checkoutBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }

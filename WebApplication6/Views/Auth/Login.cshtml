@@ -1,0 +1,80 @@
+﻿@model RegisterDto
+
+@{
+    Layout = "AuthLayout";
+}
+<div class="col-xl-10 col-lg-12 col-md-9 mx-auto">
+
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <div class="row">
+
+                <div class="col-lg-6 d-flex align-items-center justify-content-center flex-column bg-dark text-white p-5">
+                    @if (ViewBag.Enter != null)
+                    {
+                        <img src="@ViewBag.Enter.PhotoUrl" alt="Image" style="max-width: 100%; border-radius: 15px;" />
+                        <h3 class="mt-4 text-danger" style="font-weight: bold;">@ViewBag.Enter.Title</h3>
+                        <p class="text-danger">@ViewBag.Enter.SubTitle</p>
+                    }
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4" style="color: #007bff;">Create an Account!</h1>
+                        </div>
+                        <form method="post" class="user">
+
+                            @if (ViewData["error"] != null)
+                            {
+                                <div class="alert alert-danger text-center mb-4">
+                                    @ViewData["error"]
+                                </div>
+                            }
+
+                            <div class="form-group">
+                                <input type="email" asp-for="Email" class="form-control form-control-user" placeholder="Email Address" required />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group position-relative">
+                                <input type="password" asp-for="Password" class="form-control form-control-user" placeholder="Password" required />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+
+                                
+                                @if (ViewData["error"] != null)
+                                {
+                                    <div class="text-center mt-2">
+                                        <a href="/PasswordChange/ForgetPassword" class="small">Forgot Password?</a>
+                                    </div>
+                                }
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-user btn-block">
+                                Login Account
+                            </button>
+
+                            <hr />
+
+                            <a href="https://accounts.google.com/signin" class="btn btn-google btn-user btn-block">
+                                <i class="fab fa-google fa-fw"></i> Login with Google
+                            </a>
+                            <a href="https://www.facebook.com/login" class="btn btn-facebook btn-user btn-block">
+                                <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
+                            </a>
+
+                        </form>
+
+
+                        <hr />
+                        <div class="text-center">
+                            <a class="small" asp-action="Register" asp-controller="Auth">You don't  have an account? Register!</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

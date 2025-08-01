@@ -1,0 +1,71 @@
+﻿using WebApplication6.Models;
+@model List<Game>
+@if (TempData["Success"] != null)
+{
+	<div class="alert alert-success">
+		@TempData["Success"]
+	</div>
+}
+
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger">
+		@TempData["Error"]
+	</div>
+}
+<a asp-area="Admin" asp-controller="Game" asp-action="Create" class="btn btn-dark">Create New Game</a>
+<table id ="Prog"class="table table-dark table-bordered table-hovered table-striped">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Name</th>
+			<th>Catagory</th>
+			<th>Price</th>
+			<th>Discount</th>
+			<th>Dimensionality</th>
+			<th>Description</th>
+			<th>Img</th>
+			<th>Actions</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var item in Model)
+		{
+			<tr>
+				<td>@item.Id</td>
+				<td>@item.Name</td>
+				<td>
+					@string.Join(", ", item.GameCatagories.Select(gc => gc.Catagory.Name))
+				</td>
+
+				<td>@item.Price</td>
+				<td>@item.Discount</td>
+				<td>@item.Description</td>
+				<td>@item.Dimensionality</td>
+				<td>
+					@foreach (var img in item.GameImages)
+					{
+						<img src="@img.ImageUrl" width="100" class="m-1" />
+					}
+				</td>
+
+				<td>
+					<a asp-area="Admin" asp-controller="Game" asp-action="Edit"
+					asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+					<form method="post" asp-action="Delete" asp-route-id="@item.Id">
+						<button onclick="return confirm('Are you sure to delete this: @item.Name?')" class="btn btn-danger">Delete</button>
+					</form>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+			@section Scripts{
+				<script>
+					let table = new DataTable('#Prog',{
+
+					pageLength: 3
+						});
+				</script>
+			}

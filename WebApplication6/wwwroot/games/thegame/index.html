@@ -1,0 +1,117 @@
+﻿const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let player = {
+    x: 100,
+    y: 300,
+    width: 40,
+    height: 40,
+    frame: 0,
+    sprite: new Image(),
+    vy: 0,
+    jumping: false
+};
+player.sprite.src = "player.gif";
+
+let coins = [];
+let trains = [];
+let gravity = 0.5;
+let score = 0;
+
+let coinSound = new Audio("coin.wav");
+
+document.addEventListener("keydown", (e) => {
+    if ((e.key === "ArrowUp" || e.key === " ") && !player.jumping) {
+        player.vy = -10;
+        player.jumping = true;
+    }
+});
+
+function spawnCoin() {
+    coins.push({
+        x: canvas.width,
+        y: Math.random() * 200 + 100,
+        width: 20,
+        height: 20
+    });
+}
+
+function spawnTrain() {
+    trains.push({
+        x: canvas.width,
+        y: 340,
+        width: 80,
+        height: 40
+    });
+}
+
+function update() {
+    player.vy += gravity;
+    player.y += player.vy;
+
+    if (player.y >= 300) {
+        player.y = 300;
+        player.vy = 0;
+        player.jumping = false;
+    }
+
+    coins.forEach((coin, i) => {
+        coin.x -= 5;
+        if (isColliding(player, coin)) {
+            coins.splice(i, 1);
+            coinSound.play();
+            score++;
+        }
+    });
+
+    trains.forEach((train, i) => {
+        train.x -= 6;
+        if (isColliding(player, train)) {
+            alert("💥 Qatar səni vurdu! Oyun bitdi. Skor: " + score);
+            document.location.reload();
+        }
+    });
+
+    coins = coins.filter(c => c.x + c.width > 0);
+    trains = trains.filter(t => t.x + t.width > 0);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Tracks
+    ctx.fillStyle = "#444";
+    ctx.fillRect(0, 340, canvas.width, 60);
+
+    // Player
+    ctx.drawImage(player.sprite, player.frame * 40, 0, 40, 40, player.x, player.y, player.width, player.height);
+    player.frame = (player.frame + 1) % 4;
+
+    // Coins
+    ctx.fillStyle = "gold";
+    coins.forEach(coin => ctx.beginPath() || ctx.arc(coin.x, coin.y, 10, 0, Math.PI * 2) || ctx.fill());
+
+    // Trains
+    ctx.fillStyle = "red";
+    trains.forEach(train => ctx.fillRect(train.x, train.y, train.width, train.height));
+
+    ctx.fillStyle = "white";
+    ctx.fillText("Score: " + score, 20, 30);
+}
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+function isColliding(a, b) {
+    return a.x < b.x + b.width &&
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y;
+}
+
+setInterval(spawnCoin, 1500);
+setInterval(spawnTrain, 3000);
+loop();

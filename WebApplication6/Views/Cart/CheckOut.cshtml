@@ -1,0 +1,273 @@
+﻿@model Order
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Checkout";
+}
+
+<style>
+    :root {
+        --steam-dark: #1b2838;
+        --steam-darker: #171a21;
+        --steam-blue: #66c0f4;
+        --steam-light: #c7d5e0;
+        --steam-green: #5ba32b;
+        --steam-highlight: #2a475e;
+        --steam-accent: #a4d007;
+        --steam-text-secondary: #8f98a0;
+        --steam-border: #3d4450;
+    }
+
+    body {
+        background-color: var(--steam-dark);
+        color: var(--steam-light);
+    }
+
+    .checkout-section {
+        padding-top: 80px;
+        min-height: calc(100vh - 100px);
+    }
+
+    .checkout-card {
+        background-color: var(--steam-darker);
+        border: 1px solid var(--steam-border);
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .progress {
+        height: 8px;
+        background-color: var(--steam-highlight);
+    }
+
+    .progress-bar {
+        background-color: var(--steam-green);
+    }
+
+    .form-floating > label {
+        color: var(--steam-text-secondary);
+    }
+
+    .form-control {
+        background-color: rgba(0,0,0,0.2);
+        border: 1px solid var(--steam-border);
+        color: var(--steam-light);
+    }
+
+        .form-control:focus {
+            background-color: rgba(0,0,0,0.3);
+            border-color: var(--steam-blue);
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(102, 192, 244, 0.25);
+        }
+
+    .form-check-input {
+        background-color: var(--steam-dark);
+        border: 1px solid var(--steam-border);
+    }
+
+        .form-check-input:checked {
+            background-color: var(--steam-blue);
+            border-color: var(--steam-blue);
+        }
+
+    .form-check-label {
+        color: var(--steam-light);
+    }
+
+    .order-summary {
+        background-color: var(--steam-highlight);
+        padding: 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .order-summary:hover {
+            background-color: #2a475ecc;
+        }
+
+    #orderItems {
+        background-color: var(--steam-highlight);
+        border: 1px solid var(--steam-border);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--steam-green) 0%, #6bb644 100%);
+        border: none;
+        color: white;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6bb644 0%, var(--steam-green) 100%);
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-secondary {
+        color: var(--steam-blue);
+        border-color: var(--steam-blue);
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--steam-blue);
+            color: white;
+        }
+
+    .text-danger {
+        color: #ff6b6b !important;
+    }
+
+    @@media (max-width: 768px) {
+        .checkout-section {
+            padding-top: 60px;
+        }
+    }
+</style>
+
+<section class="checkout-section">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="card checkout-card shadow">
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold mb-3 text-white">Complete Your Order</h2>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 50%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Checkout Form -->
+                        <form method="post" action="/cart/checkout" id="checkoutForm">
+                            @Html.AntiForgeryToken()
+
+                            <!-- Customer Info -->
+                            <div class="mb-4">
+                                <h5 class="mb-3 text-white">
+                                    <i class="fas fa-user-circle me-2" style="color: var(--steam-blue);"></i>Customer Information
+                                </h5>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" asp-for="FullName" class="form-control" placeholder="Full Name" required />
+                                    <label>Full Name</label>
+                                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="email" asp-for="Email" class="form-control" placeholder="Email Address" required />
+                                    <label>Email Address</label>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="tel" asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" required />
+                                    <label>Phone Number</label>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Payment Method -->
+                            <div class="mb-4">
+                                <h5 class="mb-3 text-white">
+                                    <i class="fas fa-credit-card me-2" style="color: var(--steam-blue);"></i>Payment Method
+                                </h5>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="creditCard" value="Credit Card" required checked>
+                                    <label class="form-check-label" for="creditCard">
+                                        <i class="fab fa-cc-visa me-2"></i>Credit/Debit Card
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paypal" value="PayPal">
+                                    <label class="form-check-label" for="paypal">
+                                        <i class="fab fa-paypal me-2"></i>PayPal
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="Cash on Delivery">
+                                    <label class="form-check-label" for="cod">
+                                        <i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Order Summary -->
+                            <div class="mb-4">
+                                <h5 class="mb-3 text-white">
+                                    <i class="fas fa-receipt me-2" style="color: var(--steam-blue);"></i>Order Summary
+                                </h5>
+
+                                <div class="order-summary">
+                                    <div class="d-flex justify-content-between fw-bold fs-5 text-white">
+                                        <span>Total:</span>
+                                        <span>$<span id="total">0.00</span></span>
+                                    </div>
+                                </div>
+
+                                <div id="orderItems" class="mt-3 p-3 rounded d-none" style="background-color: var(--steam-highlight);">
+                                    <h6 class="mb-2 text-white">Items in your order:</h6>
+                                    <div id="orderItemsList" class="text-white"></div>
+                                </div>
+                            </div>
+
+                            <!-- Submit -->
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 mt-2">
+                                <i class="fas fa-lock me-2"></i>Complete Purchase
+                            </button>
+                        </form>
+
+                        <!-- Back to Cart -->
+                        <div class="text-center mt-4">
+                            <a href="/cart" class="text-decoration-none" style="color: var(--steam-blue);">
+                                <i class="fas fa-arrow-left me-2"></i>Return to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch("/cart/getgames")
+                .then(res => res.json())
+                .then(data => {
+                    const total = data.games.reduce((sum, game) => sum + game.price, 0);
+                    document.getElementById("total").textContent = total.toFixed(2);
+
+                    const itemsList = document.getElementById("orderItemsList");
+                    itemsList.innerHTML = data.games.map(game => `
+                        <div class="d-flex justify-content-between py-2 border-bottom" style="border-color: var(--steam-border) !important">
+                            <div>${game.name}</div>
+                            <div>$${game.price.toFixed(2)}</div>
+                        </div>
+                    `).join('');
+                });
+
+            // Toggle order items
+            const summary = document.querySelector(".order-summary");
+            const orderItems = document.getElementById("orderItems");
+            summary.addEventListener("click", () => {
+                orderItems.classList.toggle("d-none");
+                orderItems.classList.toggle("d-block");
+            });
+
+            // Form submit loading state
+            const form = document.getElementById("checkoutForm");
+            form.addEventListener("submit", function () {
+                const btn = form.querySelector("button[type='submit']");
+                btn.disabled = true;
+                btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing...`;
+            });
+        });
+    </script>
+}

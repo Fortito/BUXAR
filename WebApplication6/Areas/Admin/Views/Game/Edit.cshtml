@@ -1,0 +1,112 @@
+﻿@model Game
+@{
+	var catagories = ViewBag.catagories as List<Catagory>;
+	var selectedIds = ViewBag.SelectedCatagoryIds as List<int> ?? new List<int>();
+}
+
+<style>
+	select[multiple] {
+		min-height: 150px;
+	}
+</style>
+
+<form method="post" enctype="multipart/form-data">
+	<div class="form-group">
+		<label asp-for="Name"></label>
+		<input type="text" asp-for="Name" class="form-control" required />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="Description"></label>
+		<textarea asp-for="Description" class="form-control" required></textarea>
+		<span asp-validation-for="Description" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="Dimensionality"></label>
+		<textarea asp-for="Dimensionality" class="form-control" required></textarea>
+		<span asp-validation-for="Dimensionality" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="Price"></label>
+		<input type="number" asp-for="Price" step="0.01" min="0" class="form-control" required />
+		<span asp-validation-for="Price" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="Discount"></label>
+		<input type="number" asp-for="Discount" step="0.01" min="0" class="form-control" required />
+		<span asp-validation-for="Discount" class="text-danger"></span>
+		<div class="form-group">
+			<label asp-for="GameUrl">Game URL</label>
+			<select asp-for="GameUrl" class="form-control" asp-items="ViewBag.GameUrls" onchange="previewGame(this.value)">
+				<option value="">-- Select a game --</option>
+			</select>
+			<span asp-validation-for="GameUrl" class="text-danger"></span>
+		</div>
+
+		<div class="form-group mt-3">
+			<label>Game Preview</label>
+			<iframe id="gamePreview" style="display:none; border: 1px solid #ccc; border-radius: 10px;" width="100%" height="400"></iframe>
+		</div>
+
+		<script>
+			function previewGame(url) {
+				const iframe = document.getElementById("gamePreview");
+				if (url) {
+					iframe.style.display = 'block';
+					iframe.src = url;
+				} else {
+					iframe.style.display = 'none';
+					iframe.src = "";
+				}
+			}
+
+			window.onload = function () {
+				const select = document.querySelector('select[name="GameUrl"]');
+				if (select && select.value) {
+					previewGame(select.value);
+				}
+			};
+		</script>
+
+
+		<div class="form-group">
+			<label>Category</label>
+			@foreach (var category in catagories)
+			{
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox"
+						   name="SelectedCatagoryIds"
+						   value="@category.Id"
+					@(selectedIds.Contains(category.Id) ? "checked" : "") />
+					<label class="form-check-label">@category.Name</label>
+				</div>
+			}
+			<span asp-validation-for="SelectedCatagoryIds" class="text-danger"></span>
+		</div>
+	</div>
+
+
+		<div class="form-group">
+			<label>Current Images</label>
+			<div>
+				@if (Model.GameImages != null && Model.GameImages.Any())
+				{
+					foreach (var img in Model.GameImages)
+					{
+						<img src="@img.ImageUrl" width="150" style="margin-right:10px; margin-bottom:10px;" alt="Game Image" />
+					}
+				}
+				else
+				{
+					<p>No images uploaded.</p>
+				}
+			</div>
+		</div>
+
+	<div class="form-group my-4">
+		<label>Upload Images</label>
+		<input type="file" name="files" class="form-control" multiple />
+	</div>
+
+	<button type="submit" class="btn btn-dark">Edit</button>
+</form>

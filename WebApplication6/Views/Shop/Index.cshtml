@@ -1,0 +1,538 @@
+﻿@model List<Game>
+@{
+    var categories = ViewBag.catagories as List<Catagory>;
+    ViewData["Title"] = "Game Shop - Fortito";
+}
+
+@section Styles {
+    <style>
+
+        :root {
+            --steam-dark: #1b2838;
+            --steam-darker: #171a21;
+            --steam-blue: #66c0f4;
+            --steam-light: #c7d5e0;
+            --steam-green: #5ba32b;
+            --steam-highlight: #2a475e;
+            --steam-accent: #a4d007;
+            --steam-text-secondary: #8f98a0;
+            --steam-border: #3d4450;
+        }
+
+
+
+        .shop-banner {
+
+            background: linear-gradient(135deg, var(--steam-darker) 0%, var(--steam-dark) 100%);
+            padding: 80px 0 60px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .banner-content h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+
+        .breadcrumb {
+            color: var(--steam-blue);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--steam-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--steam-blue);
+        }
+
+
+        .search-section {
+            margin-top: 20px;
+        }
+
+        .search-form {
+            background: rgba(0,0,0,0.2);
+            border-radius: 3px;
+            display: flex;
+            max-width: 500px;
+            margin-left: auto;
+            border: 1px solid var(--steam-border);
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: var(--steam-light);
+            padding: 12px 15px;
+            flex: 1;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--steam-text-secondary);
+        }
+
+        .search-button {
+            background: var(--steam-highlight);
+            border: none;
+            color: white;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-button:hover {
+            background: var(--steam-blue);
+        }
+        body {
+                background-color: var(--steam-darker);
+                color: var(--steam-light);
+            }
+
+
+        .category-filters {
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--steam-border);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 300;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            background: var(--steam-dark);
+            color: var(--steam-light);
+            border: 1px solid var(--steam-border);
+            padding: 8px 16px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--steam-highlight);
+            color: white;
+            border-color: var(--steam-blue);
+        }
+
+
+        .game-card {
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card-inner {
+            position: relative;
+            background: linear-gradient(135deg, var(--steam-darker) 0%, var(--steam-dark) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover .game-card-inner {
+            transform: translateY(-5px);
+            border-color: var(--steam-blue);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .game-image-link {
+            display: block;
+            overflow: hidden;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover .game-image {
+            transform: scale(1.05);
+        }
+
+        .game-info {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title-price {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .game-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .price-section {
+            text-align: right;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .original-price {
+            color: var(--steam-text-secondary);
+            text-decoration: line-through;
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .discount-price {
+            color: var(--steam-green);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .regular-price {
+            color: var(--steam-light);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .game-categories {
+            color: var(--steam-text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .add-to-cart-btn {
+            background: linear-gradient(135deg, var(--steam-green) 0%, #6bb644 100%);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 10px 15px;
+            font-weight: 500;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: auto;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #6bb644 0%, var(--steam-green) 100%);
+            transform: translateY(-1px);
+        }
+
+        .add-to-cart-btn:disabled, .disabled-btn {
+            background: #6d6d6d !important;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--steam-green);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        @@media (max-width: 992px) {
+            .banner-content h1 {
+                font-size: 2rem;
+            }
+            
+            .filter-buttons {
+                justify-content: flex-start;
+                margin-top: 15px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .search-form {
+                max-width: 100%;
+            }
+            
+            .game-title-price {
+                flex-direction: column;
+            }
+            
+            .price-section {
+                text-align: left;
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .banner-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .game-image {
+                height: 160px;
+            }
+        }
+    </style>
+}
+
+
+<section class="shop-banner ">
+    <div class="container mt-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="banner-content">
+                    <h1>Game Shop</h1>
+                    <p class="breadcrumb">
+                        <a href="/">Home</a> > <span>Shop</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="search-section">
+                    <form asp-controller="Search" asp-action="Index" method="get" class="search-form">
+                        <input type="text" name="query" class="search-input" placeholder="Search games..." />
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="shop-main py-5">
+    <div class="container">
+
+        <div class="category-filters mb-5">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <h2 class="section-title mb-3 mb-md-0">Browse Games</h2>
+                <div class="filter-buttons">
+                    <a href="#" class="filter-btn active" data-filter="*">All Games</a>
+                    @if (categories != null)
+                    {
+                        foreach (var item in categories)
+                        {
+                            var cleanName = item.Name.ToLower().Replace(" ", "").Replace("ə", "e").Replace("ü", "u").Replace("ı", "i").Replace("ö", "o").Replace("ç", "c").Replace("ş", "s");
+                            <a href="#" class="filter-btn" data-filter=".@cleanName">@item.Name</a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row g-4 game-grid">
+            @if (Model != null)
+            {
+                foreach (var game in Model)
+                {
+                    var categoryClasses = string.Join(" ", game.GameCatagories?
+                        .Select(gc => gc.Catagory?.Name.ToLower().Replace(" ", "").Replace("ə", "e").Replace("ü", "u").Replace("ı", "i").Replace("ö", "o").Replace("ç", "c").Replace("ş", "s")) ?? new List<string>());
+
+                    <div class="col-xl-3 col-lg-4 col-md-6 @categoryClasses">
+                        <div class="game-card">
+                            <div class="game-card-inner">
+
+                                @if (game.Discount > 0 && game.Price > 0)
+                                {
+                                    var discountPercent = Math.Round(((game.Price - game.Discount) / game.Price) * 100);
+                                    <div class="discount-badge">-@discountPercent%</div>
+                                }
+
+                                <a href="/game/detail/@game.Id" class="game-image-link">
+                                    <img src="@game.GameImages.FirstOrDefault()?.ImageUrl" class="game-image" alt="@game.Name" />
+                                </a>
+
+ 
+                                <div class="game-info">
+                                    <div class="game-title-price">
+                                        <h3 class="game-title">@game.Name</h3>
+                                        <div class="price-section">
+                                            @if (game.Discount > 0)
+                                            {
+                                                <span class="original-price">$@game.Price</span>
+                                                <span class="discount-price">$@game.Discount</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="regular-price">$@game.Price</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="game-categories">
+                                        @if (game.GameCatagories != null && game.GameCatagories.Any())
+                                        {
+                                            @string.Join(", ", game.GameCatagories.Select(gc => gc.Catagory?.Name))
+                                        }
+                                        else
+                                        {
+                                            <span>No categories</span>
+                                        }
+                                    </div>
+
+                                    <button class="add-to-cart-btn" data-game-id="@game.Id" onclick="AddToBasket(@game.Id)">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+
+        let ownedGameIds = [];
+
+
+        fetch('/Cart/GetOwnedGameIds')
+            .then(response => response.json())
+            .then(data => {
+                ownedGameIds = data.ids || [];
+                disableOwnedGamesButtons();
+            })
+            .catch(error => {
+                console.error('Error loading owned games:', error);
+            });
+
+        function disableOwnedGamesButtons() {
+            ownedGameIds.forEach(id => {
+                const btn = document.querySelector(`button[data-game-id="${id}"]`);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "In Library";
+                    btn.classList.add('disabled-btn');
+                }
+            });
+        }
+
+
+        function AddToBasket(id) {
+            if (ownedGameIds.includes(id)) {
+                Swal.fire({
+                    title: 'Already Owned',
+                    text: 'This game is already in your library',
+                    icon: 'info',
+                    confirmButtonColor: '#66c0f4'
+                });
+                return;
+            }
+
+            const btn = document.querySelector(`button[data-game-id="${id}"]`);
+            if (!btn) return;
+
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'Adding...';
+
+            $.ajax({
+                url: `/Cart/AddToBasket?id=${id}`,
+                type: "GET",
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Added to Cart',
+                            text: 'Game successfully added to your cart',
+                            icon: 'success',
+                            confirmButtonColor: '#66c0f4'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: res.message || 'Failed to add to cart',
+                            icon: 'error',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                },
+                complete: function () {
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const gameItems = document.querySelectorAll('.game-grid > div');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+
+                    gameItems.forEach(item => {
+                        if (filter === '*' || item.classList.contains(filter.substring(1))) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedCategory = urlParams.get('category');
+            if (selectedCategory) {
+                const cleanCategory = selectedCategory.toLowerCase().replace(/\s+/g, '');
+                const matchingButton = Array.from(filterButtons).find(button => {
+                    const buttonFilter = button.getAttribute('data-filter');
+                    return buttonFilter !== '*' && buttonFilter.includes(cleanCategory);
+                });
+                
+                if (matchingButton) {
+                    matchingButton.click();
+                }
+            }
+        });
+    </script>
+}

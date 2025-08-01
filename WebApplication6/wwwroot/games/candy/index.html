@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Candy Crush Lite</title>
+    <style>
+        body {
+            background: #ffe4ec;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+#board {
+    width: 480px; 
+    height: 480px;
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    grid-template-rows: repeat(8, 60px);
+    gap: 2px;
+}
+
+.tile {
+    width: 60px;
+    height: 60px;
+    background-size: cover;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+        #score {
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Candy Crush Lite</h1>
+    <div id="board"></div>
+    <div id="score">Score: 0</div>
+
+    <script src="game.js"></script>
+</body>
+</html>

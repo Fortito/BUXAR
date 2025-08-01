@@ -1,0 +1,26 @@
+﻿@model AppUser
+@inject UserManager<AppUser> userManager
+
+<table>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		@{
+			var roles = await userManager.GetRolesAsync(Model);
+			foreach (var item in roles)
+			{
+				<tr>
+					<td>@item</td>
+					<td>
+						<a asp-area="Admin" asp-controller="User" asp-action="DeleteRole"
+						   asp-route-userId="@Model.Id" asp-route-role="@item" class="btn btn-danger">Delete</a>
+					</td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>

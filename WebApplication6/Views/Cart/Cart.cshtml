@@ -1,0 +1,460 @@
+﻿@{
+    ViewBag.Title = "Shopping Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --steam-dark: #1b2838;
+        --steam-darker: #171a21;
+        --steam-blue: #66c0f4;
+        --steam-light: #c7d5e0;
+        --steam-green: #5ba32b;
+        --steam-highlight: #2a475e;
+        --steam-accent: #a4d007;
+        --steam-text-secondary: #8f98a0;
+        --steam-border: #3d4450;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--steam-dark);
+    }
+
+    main {
+        margin: 0;
+        padding: 0;
+    }
+
+    footer {
+        margin: 0 !important;
+        padding-top: 30px;
+        padding-bottom: 10px;
+    }
+    .cart-container {
+        background-color: var(--steam-dark);
+        color: var(--steam-light);
+        min-height: calc(100vh - 100px);
+        padding: 2rem 0;
+        padding-top: 80px;
+    }
+
+    .cart-header {
+        color: white;
+        border-bottom: 2px solid var(--steam-highlight);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .cart-header-icon {
+        color: var(--steam-blue);
+    }
+
+    .cart-item-count {
+        color: var(--steam-text-secondary);
+    }
+
+    .continue-shopping-btn {
+        background-color: transparent;
+        border: 1px solid var(--steam-blue);
+        color: var(--steam-blue);
+        transition: all 0.2s ease;
+    }
+
+        .continue-shopping-btn:hover {
+            background-color: var(--steam-blue);
+            color: white;
+        }
+
+    .cart-item-card {
+        background-color: var(--steam-darker);
+        border: 1px solid var(--steam-border);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+        .cart-item-card:hover {
+            border-color: var(--steam-blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+    .game-image-container {
+        width: 100px;
+        height: 60px;
+        overflow: hidden;
+        border-radius: 4px;
+    }
+
+    .game-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .game-title {
+        color: white;
+        font-weight: 500;
+    }
+
+    .game-type {
+        color: var(--steam-text-secondary);
+        font-size: 0.85rem;
+    }
+
+    .game-price {
+        color: var(--steam-blue);
+        font-weight: bold;
+    }
+
+    .remove-item-btn {
+        background-color: transparent;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        transition: all 0.2s ease;
+    }
+
+        .remove-item-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+    .summary-card {
+        background-color: var(--steam-darker);
+        border: 1px solid var(--steam-highlight);
+        border-radius: 4px;
+    }
+
+    .summary-header {
+        background-color: var(--steam-highlight);
+        color: white;
+        border-bottom: none;
+    }
+
+    .summary-title {
+        color: white;
+    }
+
+    .summary-divider {
+        border-color: var(--steam-border);
+    }
+
+    .summary-label {
+        color: var(--steam-light);
+    }
+
+    .summary-value {
+        color: var(--steam-blue);
+        font-weight: bold;
+    }
+
+    .checkout-btn {
+        background: linear-gradient(135deg, var(--steam-green) 0%, #6bb644 100%);
+        border: none;
+        color: white;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+        .checkout-btn:hover {
+            background: linear-gradient(135deg, #6bb644 0%, var(--steam-green) 100%);
+            transform: translateY(-2px);
+        }
+
+        .checkout-btn.disabled {
+            background: #6d6d6d;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+    .empty-cart-container {
+        background-color: var(--steam-darker);
+        border-radius: 8px;
+        padding: 3rem;
+        margin: 2rem 0;
+        border: 1px solid var(--steam-border);
+        text-align: center;
+    }
+
+    .empty-cart-icon {
+        color: var(--steam-text-secondary);
+        font-size: 4rem;
+        opacity: 0.7;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-cart-title {
+        color: var(--steam-light);
+        font-weight: 300;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-cart-message {
+        color: var(--steam-text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .toast-success {
+        background-color: var(--steam-green) !important;
+    }
+
+    @@media (max-width: 768px) {
+        .game-image-container {
+            width: 80px;
+            height: 50px;
+        }
+
+        .summary-card {
+            margin-top: 2rem;
+        }
+
+        .empty-cart-container {
+            padding: 2rem 1rem;
+        }
+
+        .empty-cart-icon {
+            font-size: 3rem;
+        }
+    }
+</style>
+
+<section class="cart-container">
+    <div class="container py-5">
+        <div class="row">
+            <!-- Cart Items Column -->
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="cart-header">
+                            <i class="fas fa-shopping-cart cart-header-icon me-2"></i>Your Cart
+                        </h2>
+                        <p class="cart-item-count mb-0">You have <span id="itemCount" class="fw-bold">0</span> items in your cart</p>
+                    </div>
+                    <a href="/" class="btn continue-shopping-btn">
+                        <i class="fas fa-long-arrow-alt-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+
+                <hr class="my-4 bg-secondary">
+
+                <div id="cartItems">
+                    <!-- Loading spinner -->
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading your cart...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Column -->
+            <div class="col-lg-4">
+                <div class="card summary-card h-100">
+                    <div class="card-header summary-header">
+                        <h5 class="summary-title mb-0">
+                            <i class="fas fa-receipt me-2"></i>Order Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="orderSummary">
+                            <!-- Loading spinner -->
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 pt-0">
+                        <a id="checkoutBtn" href="/cart/checkout" class="btn checkout-btn btn-lg w-100 disabled">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Proceed to Checkout</span>
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            loadCart();
+        });
+
+        function loadCart() {
+            $.ajax({
+                url: "/cart/getgames",
+                type: "GET",
+                beforeSend: function() {
+                    // Show loading states
+                    $('#cartItems').html(`
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading your cart...</p>
+                        </div>
+                    `);
+                    $('#orderSummary').html(`
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    `);
+                },
+                success: function(response) {
+                    renderCart(response);
+                },
+                error: function() {
+                    $('#cartItems').html(`
+                        <div class="alert alert-danger">
+                            Failed to load cart. Please try again later.
+                        </div>
+                    `);
+                }
+            });
+        }
+
+        function renderCart(data) {
+            const cartItems = $('#cartItems');
+            const orderSummary = $('#orderSummary');
+            const checkoutBtn = $('#checkoutBtn');
+            const itemCount = $('#itemCount');
+
+            if (data.games.length === 0) {
+                cartItems.html(`
+                    <div class="empty-cart-container">
+                        <i class="fas fa-shopping-cart empty-cart-icon"></i>
+                        <h4 class="empty-cart-title">Your cart is empty</h4>
+                        <p class="empty-cart-message">Start shopping to add items to your cart</p>
+                        <a href="/shop" class="btn btn-primary btn-lg">
+                            <i class="fas fa-store me-2"></i>Go Shopping
+                        </a>
+                    </div>
+                `);
+
+                orderSummary.html(`
+                    <div class="text-center py-3">
+                        <p class="text-muted">No items in cart</p>
+                    </div>
+                `);
+
+                checkoutBtn.addClass('disabled');
+                itemCount.text('0');
+                return;
+            }
+
+            // Render cart items
+            let cartItemsHtml = '';
+            data.games.forEach(game => {
+                cartItemsHtml += `
+                    <div class="card mb-3 cart-item-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="game-image-container me-3">
+                                        <img src="${game.photoUrl}"
+                                             class="game-image"
+                                             alt="${game.name}">
+                                    </div>
+                                    <div>
+                                        <h5 class="game-title mb-1">${game.name}</h5>
+                                        <p class="game-type mb-0">Game</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-4 text-end" style="width: 80px;">
+                                        <h5 class="game-price mb-0">$${game.price.toFixed(2)}</h5>
+                                    </div>
+                                    <button onclick="removeFromCart(${game.id})"
+                                            class="btn remove-item-btn btn-sm">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            cartItems.html(cartItemsHtml);
+
+            // Calculate subtotal (same as total)
+            const subtotal = data.games.reduce((sum, game) => sum + game.price, 0);
+            const total = subtotal;
+
+            // Render order summary
+            orderSummary.html(`
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="summary-label">Subtotal</span>
+                    <span class="summary-value">$${subtotal.toFixed(2)}</span>
+                </div>
+                <hr class="summary-divider">
+                <div class="d-flex justify-content-between">
+                    <span class="summary-label fw-bold">Total</span>
+                    <span class="summary-value fw-bold">$${total.toFixed(2)}</span>
+                </div>
+            `);
+
+            // Update item count and enable checkout
+            itemCount.text(data.games.length);
+            checkoutBtn.removeClass('disabled');
+        }
+
+        function removeFromCart(id) {
+            if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                return;
+            }
+
+            $.ajax({
+                url: "/cart/deletefromcart",
+                type: "POST",
+                data: { id: id },
+                beforeSend: function() {
+                    // Show loading indicator on the button
+                    $(`button[onclick="removeFromCart(${id})"]`).html(
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                    ).prop('disabled', true);
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        const toast = `
+                            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                                    <div class="toast-header toast-success text-white">
+                                        <strong class="me-auto">Success</strong>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                                    </div>
+                                    <div class="toast-body">
+                                        Item removed from cart successfully.
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        $('body').append(toast);
+
+                        // Remove toast after 3 seconds
+                        setTimeout(() => {
+                            $('.toast').remove();
+                        }, 3000);
+
+                        // Reload cart
+                        loadCart();
+                    }
+                },
+                error: function() {
+                    alert('Failed to remove item. Please try again.');
+                    loadCart();
+                }
+            });
+        }
+    </script>
+}

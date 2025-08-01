@@ -1,0 +1,30 @@
+﻿@model UserRoleVm
+@inject RoleManager<IdentityRole> roleManager
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h6>@Model.AppUser.FirstName @Model.AppUser.LastName</h6>
+
+<form method="post">
+    <input type="hidden" name="userId" value="@Model.AppUser.Id" />
+
+    <select name="role" class="form-control" required>
+        @if (!Model.Roles.Any())
+        {
+            <option disabled selected>All roles used</option>
+        }
+        else
+        {
+            <option value="" disabled selected></option>
+            @foreach (var role in Model.Roles)
+            {
+                <option value="@role">@role</option>
+            }
+        }
+    </select>
+
+    <button type="submit" class="btn btn-dark" @(Model.Roles.Any() ? "" : "disabled")>Create</button>
+</form>

@@ -1,0 +1,153 @@
+﻿/* Checkout Page Styles */
+.checkout-section {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 120px);
+    padding-bottom: 2rem; /* ✨ Added for spacing on bottom */
+}
+
+.checkout-card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+}
+
+.checkout-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+    .checkout-header h2 {
+        color: #2c3e50;
+        font-weight: 700;
+    }
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed #dee2e6;
+}
+
+.form-floating label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.form-control, .form-select {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+
+.payment-methods {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    margin-top: 0;
+    vertical-align: middle; /* ✨ Align fix */
+}
+
+.form-check-label {
+    font-weight: 500;
+    margin-left: 0.5em;
+    vertical-align: middle; /* ✨ Align fix */
+}
+
+.order-summary {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .order-summary:hover {
+        background-color: #dee2e6; /* ✨ Improved hover */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+/* ✨ Animated orderItems toggle */
+#orderItems {
+    transition: all 0.3s ease-in-out;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+    #orderItems.d-block {
+        max-height: 1000px;
+        opacity: 1;
+    }
+
+.btn-primary {
+    background-color: #2c3e50;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #1a252f;
+        transform: translateY(-2px);
+    }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .checkout-card {
+        border-radius: 0;
+    }
+
+    .form-control, .form-select {
+        padding: 0.75rem;
+    }
+}
+
+/* ✨ Extra mobile padding */
+@media (max-width: 576px) {
+    .checkout-section {
+        padding: 1rem;
+    }
+
+    .order-summary {
+        padding: 1rem;
+    }
+
+    .btn-primary {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+}
+
+/* Validation Styles */
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.input-validation-error {
+    border-color: #dc3545;
+}
+
+    .input-validation-error:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }

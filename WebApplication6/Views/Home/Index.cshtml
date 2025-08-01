@@ -1,0 +1,1256 @@
+﻿@model HomeVm
+@{
+    ViewData["Title"] = "Fortito - Gaming Platform";
+}
+
+<style>
+
+    :root {
+        --steam-dark: #1b2838;
+        --steam-darker: #171a21;
+        --steam-blue: #66c0f4;
+        --steam-light: #c7d5e0;
+        --steam-green: #5ba32b;
+        --steam-highlight: #2a475e;
+        --steam-accent: #a4d007;
+    }
+
+
+    .carousel-item {
+        background-color: var(--steam-darker);
+        padding: 30px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .carousel-item h3 {
+            font-weight: 400;
+            color: var(--steam-light);
+        }
+
+    .carousel .badge {
+        background-color: var(--steam-highlight);
+        color: var(--steam-light);
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+
+
+
+    .carousel-indicators {
+        margin-top: 40px !important;
+    }
+
+    
+    .categories-carousel-section, .games-section, .carousel-container, section, .content {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    footer {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    body {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    footer .btn {
+        margin-bottom: 10px;
+    }
+
+
+
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: var(--steam-dark);
+        color: var(--steam-light);
+        font-family: 'Motiva Sans', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    main {
+        flex: 1;
+    }
+
+
+    footer {
+        margin-top: 0; !important;
+        padding-top: 0 !important;
+        background-color: var(--steam-darker);
+        padding: 20px 0;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        flex-shrink: 0;
+    }
+
+    .py-5 {
+        padding: 60px 0;
+    }
+
+    section:last-of-type {
+        padding-bottom: 0;
+    }
+
+    .categories-carousel-section {
+        background-color: var(--steam-dark);
+        padding-bottom: 0; 
+        margin-bottom: 0 !important;
+    }
+ 
+    .main-banner {
+        background: linear-gradient(135deg, var(--steam-darker) 0%, var(--steam-dark) 100%);
+        padding: 80px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .hero-content h6 {
+        color: var(--steam-blue);
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .hero-content h2 {
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 15px;
+    }
+
+    .hero-content p {
+        color: var(--steam-light);
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+    }
+
+
+    .search-section {
+        margin-top: 30px;
+    }
+
+    .search-form {
+        background: rgba(0,0,0,0.3);
+        border-radius: 4px;
+        padding: 5px;
+        display: flex;
+        max-width: 500px;
+    }
+
+    .search-input {
+        background: transparent;
+        color: white;
+        border: none;
+        padding: 12px 15px;
+        flex: 1;
+        outline: none;
+    }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+    .search-button {
+        background: linear-gradient(135deg, var(--steam-green) 0%, #6bb644 100%);
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .search-button:hover {
+            background: linear-gradient(135deg, #6bb644 0%, var(--steam-green) 100%);
+            transform: translateY(-1px);
+        }
+
+
+    .game-card {
+        background: linear-gradient(135deg, var(--steam-darker) 0%, var(--steam-dark) 100%);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, var(--steam-highlight) 0%, var(--steam-dark) 100%);
+            border-color: var(--steam-blue);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+    .game-card-img {
+        height: 200px;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .game-card:hover .game-card-img {
+        transform: scale(1.05);
+    }
+
+    .game-title {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .game-title-price {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .price-section .original-price {
+        color: #737373;
+        text-decoration: line-through;
+        font-size: 0.9rem;
+    }
+
+    .price-section .discount-price {
+        color: var(--steam-accent);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .price-section .regular-price {
+        color: var(--steam-light);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .game-categories {
+        color: #8f98a0;
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+
+    .game-description {
+        color: var(--steam-light);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+
+    .add-to-cart-btn {
+        background: linear-gradient(135deg, var(--steam-green) 0%, #6bb644 100%);
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 10px 15px;
+        font-weight: 500;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #6bb644 0%, var(--steam-green) 100%);
+            transform: translateY(-1px);
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #6d6d6d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+   
+    .section-header {
+        margin-bottom: 40px;
+    }
+
+        .section-header h2 {
+            color: white;
+            font-weight: 300;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--steam-highlight);
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+    .subtitle {
+        color: var(--steam-blue);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+    }
+
+   
+    .py-5 {
+        padding: 60px 0;
+    }
+
+    .bg-light {
+        background-color: var(--steam-darker) !important;
+    }
+
+    .category-item {
+        transition: transform 0.2s ease;
+    }
+
+        .category-item:hover {
+            transform: translateY(-3px);
+        }
+
+    .category-thumb {
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .category-item h5 {
+        color: var(--steam-light);
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+ 
+    .btn-primary {
+        background: linear-gradient(135deg, var(--steam-blue) 0%, #4a90e2 100%);
+        border: none;
+        border-radius: 3px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4a90e2 0%, var(--steam-blue) 100%);
+            transform: translateY(-1px);
+        }
+
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+    }
+
+    <style >
+
+        @@media (max-width: 768px) {
+        .hero-content h2
+
+    {
+        font-size: 2rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-button {
+        margin-top: 10px;
+        border-radius: 3px;
+    }
+
+    }
+
+        @@media (max-width: 576px) {
+        .game-card-img
+
+    {
+        height: 160px;
+    }
+
+    .py-5 {
+        padding: 40px 0;
+    }
+
+    }
+</style>
+
+<section class="main-banner"  >
+    @if (Model.LastEnter != null)
+    {
+        var item = Model.LastEnter;
+        <div class="container mt-5 " >
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h6>Featured</h6>
+                        <h2>@item.Title</h2>
+                        <p>@item.SubTitle</p>
+                        <div class="search-section">
+                            <form asp-controller="Search" asp-action="Index" method="get" class="search-form">
+                                <input type="text" name="query" class="search-input" placeholder="Search for games..." />
+                                <button type="submit" class="search-button">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <img src="@item.PhotoUrl" alt="@item.Title" class="img-fluid" style="border-radius: 8px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center section-header mb-4">
+            <div class="col-lg-6">
+                <h2>Special Offers</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <a href="/shop" class="btn btn-primary btn-lg">View All Games</a>
+            </div>
+        </div>
+        <div class="row g-4">
+            @foreach (var game in Model.games.Where(g => g.Discount > 0).Take(4))
+            {
+                <div class="col-lg-3 col-md-6">
+                    <div class="card game-card">
+                        <a href="/game/detail/@game.Id">
+                            <img src="@game.GameImages.FirstOrDefault()?.ImageUrl" alt="@game.Name" class="card-img-top game-card-img" />
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            <div class="game-title-price">
+                                <h5 class="game-title">@game.Name</h5>
+                                <div class="price-section">
+                                    <span class="original-price me-2">$@game.Price</span>
+                                    <span class="discount-price">$@game.Discount</span>
+                                </div>
+                            </div>
+                            <p class="game-categories">
+                                @string.Join(", ", game.GameCatagories?.Select(gc => gc.Catagory?.Name) ?? new List<string>())
+                            </p>
+                            <div class="mt-auto">
+                                <button class="add-to-cart-btn" data-game-id="@game.Id" onclick="AddToBasket(@game.Id)">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center section-header">
+            <div class="col-lg-6">
+                <h2>New Games</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <a href="/shop" class="btn btn-primary btn-lg">View All Games</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var game in Model.games)
+            {
+                <div class="col-lg-3 col-md-6">
+                    <div class="card game-card">
+                        <a href="/game/detail/@game.Id">
+                            <img src="@game.GameImages.FirstOrDefault()?.ImageUrl" class="card-img-top game-card-img" alt="@game.Name" />
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            <div class="game-title-price">
+                                <h5 class="game-title">@game.Name</h5>
+                                <div class="price-section">
+                                    @if (game.Discount > 0)
+                                    {
+                                        <span class="original-price me-2">$@game.Price</span>
+                                        <span class="discount-price">$@game.Discount</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="regular-price">$@game.Price</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <p class="game-categories">
+                                @if (game.GameCatagories != null && game.GameCatagories.Any())
+                                {
+                                    @string.Join(", ", game.GameCatagories.Select(gc => gc.Catagory?.Name))
+                                }
+                                else
+                                {
+                                    <span>No categories</span>
+                                }
+                            </p>
+
+                            <div class="mt-auto">
+                                <button class="add-to-cart-btn" data-game-id="@game.Id" onclick="AddToBasket(@game.Id)">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center section-header">
+            <div class="col-lg-6">
+                <p class="subtitle">Top Games</p>
+                <h2>Trending Games</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <a href="/shop" class="btn btn-primary btn-lg">View All Games</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @if (Model.TrendingGames != null)
+            {
+                @foreach (var game in Model.TrendingGames)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card game-card">
+                            <a href="/game/detail/@game.Id">
+                                <img src="@game.GameImages.FirstOrDefault()?.ImageUrl" class="card-img-top game-card-img" alt="@game.Name" />
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <div class="game-title-price">
+                                    <h5 class="game-title">@game.Name</h5>
+                                    <div class="price-section">
+                                        @if (game.Discount > 0)
+                                        {
+                                            <span class="original-price me-2">$@game.Price</span>
+                                            <span class="discount-price">$@game.Discount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="regular-price">$@game.Price</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(game.Description))
+                                {
+                                    <p class="game-description">@game.Description</p>
+                                }
+
+                                <p class="game-categories">
+                                    @if (game.GameCatagories != null && game.GameCatagories.Any())
+                                    {
+                                        @string.Join(", ", game.GameCatagories.Select(gc => gc.Catagory?.Name))
+                                    }
+                                    else
+                                    {
+                                        <span>No categories</span>
+                                    }
+                                </p>
+
+                                <div class="mt-auto">
+                                    <button class="add-to-cart-btn" data-game-id="@game.Id" onclick="AddToBasket(@game.Id)">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center section-header">
+            <div class="col-lg-6">
+                <p class="subtitle">Top Sellers</p>
+                <h2>Most Ordered Games</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <a href="/shop" class="btn btn-primary btn-lg">View All Games</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @if (Model.MostOrderedGames != null && Model.MostOrderedGames.Any())
+            {
+                @foreach (var game in Model.MostOrderedGames)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card game-card">
+                            <a href="/game/detail/@game.Id">
+                                <img src="@game.GameImages.FirstOrDefault()?.ImageUrl" class="card-img-top game-card-img" alt="@game.Name" />
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <div class="game-title-price">
+                                    <h5 class="game-title">@game.Name</h5>
+                                    <div class="price-section">
+                                        @if (game.Discount > 0)
+                                        {
+                                            <span class="original-price me-2">$@game.Price</span>
+                                            <span class="discount-price">$@game.Discount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="regular-price">$@game.Price</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(game.Description))
+                                {
+                                    <p class="game-description">@game.Description</p>
+                                }
+
+                                <p class="game-categories">
+                                    @if (game.GameCatagories != null && game.GameCatagories.Any())
+                                    {
+                                        @string.Join(", ", game.GameCatagories.Select(gc => gc.Catagory?.Name))
+                                    }
+                                    else
+                                    {
+                                        <span>No categories</span>
+                                    }
+                                </p>
+
+                                <div class="mt-auto">
+                                    <button class="add-to-cart-btn" data-game-id="@game.Id" onclick="AddToBasket(@game.Id)">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p class="text-muted">No most ordered games found.</p>
+                </div>
+            }
+        </div>
+    </div>
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center section-header mb-4">
+            <div class="col-lg-6">
+                <h2>Highlights and Recommendations</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <a href="/shop" class="btn btn-primary btn-lg">View All Games</a>
+            </div>
+        </div>
+
+        <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.FeaturedGames.Count; i++)
+                {
+                    var game = Model.FeaturedGames[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row align-items-center">
+                         
+                            <div class="col-md-7">
+                                <a href="/game/detail/@game.Id">
+                                    <img src="@game.GameImages.FirstOrDefault()?.ImageUrl"
+                                         class="d-block w-100"
+                                         style="border-radius: 8px; height: 400px; object-fit: cover;"
+                                         alt="@game.Name" />
+                                </a>
+                            </div>
+
+                            <div class="col-md-5 text-white">
+                                <h3>
+                                    <a href="/game/detail/@game.Id" class="text-white text-decoration-none">
+                                        @game.Name
+                                    </a>
+                                </h3>
+
+                                @if (game.GameImages.Count > 1)
+                                {
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        @foreach (var img in game.GameImages.Skip(1).Take(4))
+                                        {
+                                            <img src="@img.ImageUrl" style="width: 90px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                                        }
+                                    </div>
+                                }
+
+                                <p>
+                                    @foreach (var tag in game.GameCatagories)
+                                    {
+                                        <span class="badge bg-secondary me-1">@tag.Catagory?.Name</span>
+                                    }
+                                </p>
+
+                                <h5 class="mt-3">
+                                    @if (game.Discount > 0)
+                                    {
+                                        <del class="text-muted me-2">$@game.Price</del>
+                                        <span class="text-warning">$@game.Discount</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-light">$@game.Price</span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center section-header mb-4">
+            <div class="col-lg-6">
+                <div class="subtitle text-muted">Recommended</div>
+                <h2>Recommended For You</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <a href="/shop" class="btn btn-primary btn-lg">View All Games</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @if (Model.RecommendedGames != null && Model.RecommendedGames.Any())
+            {
+                @foreach (var game in Model.RecommendedGames)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card game-card">
+                            <a href="/game/detail/@game.Id">
+                                <img src="@game.GameImages.FirstOrDefault()?.ImageUrl" class="card-img-top game-card-img" alt="@game.Name" />
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <div class="game-title-price">
+                                    <h5 class="game-title">@game.Name</h5>
+                                    <div class="price-section">
+                                        @if (game.Discount > 0)
+                                        {
+                                            <span class="original-price me-2">$@game.Price</span>
+                                            <span class="discount-price">$@game.Discount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="regular-price">$@game.Price</span>
+                                        }
+                                    </div>
+                                </div>
+                                <p class="game-categories">
+                                    @if (game.GameCatagories != null && game.GameCatagories.Any())
+                                    {
+                                        @string.Join(", ", game.GameCatagories.Select(gc => gc.Catagory?.Name))
+                                    }
+                                    else
+                                    {
+                                        <span>No categories</span>
+                                    }
+                                </p>
+
+                                <div class="mt-auto">
+                                    <button class="add-to-cart-btn" data-game-id="@game.Id" onclick="AddToBasket(@game.Id)">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p class="text-muted">No recommendations found.</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="categories-carousel-section py-5">
+    <div class="container">
+        <div class="categories-header text-center mb-4">
+            <p class="categories-subtitle">BROWSE BY CATEGORIES</p>
+            <h2>Browse Categories</h2>
+        </div>
+
+        <div class="categories-carousel position-relative">
+            <button class="carousel-nav prev" onclick="moveCarousel(-1)">‹</button>
+            <button class="carousel-nav next" onclick="moveCarousel(1)">›</button>
+
+            <div class="categories-track-container">
+                <div class="categories-track" id="categoriesTrack">
+                    @{
+                        var gradients = new[]
+                        {
+                    "linear-gradient(45deg, #F44336, #EF5350)", "linear-gradient(45deg, #FF9800, #FFB74D)",
+                    "linear-gradient(45deg, #4CAF50, #81C784)", "linear-gradient(45deg, #2196F3, #64B5F6)",
+                    "linear-gradient(45deg, #9C27B0, #BA68C8)", "linear-gradient(45deg, #607D8B, #90A4AE)",
+                    "linear-gradient(45deg, #795548, #A1887F)", "linear-gradient(45deg, #FF5722, #FF8A65)"
+                    };
+                    }
+                    @foreach (var c in Model.catagories)
+                    {
+                        var idx = Math.Abs(c.Name.GetHashCode()) % gradients.Length;
+                        var count = Model.gamecatagories.Count(gc => gc.CatagoryId == c.Id);
+                        <div class="category-card" onclick="navigateToCategory('@c.Name.ToLower()')">
+                            <div class="category-background" style="background: @gradients[idx];"></div>
+                            <div class="category-overlay">
+                                <h3 class="category-title">@c.Name.ToUpper()</h3>
+                                <p class="category-count">@count+ Games</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="carousel-indicators" id="carouselIndicators">
+           
+        </div>
+    </div>
+</section>
+
+<style>
+
+    .categories-carousel-section {
+        background-color: var(--steam-dark);
+    }
+
+    .categories-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+        .categories-header h2 {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--steam-highlight);
+            padding-bottom: 15px;
+        }
+
+    .categories-subtitle {
+        color: var(--steam-blue);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+    }
+
+
+    .categories-carousel {
+        position: relative;
+        margin: 0 60px;
+        height: 220px;
+    }
+
+    .categories-track-container {
+        overflow: hidden;
+        height: 100%;
+        border-radius: 8px;
+    }
+
+    .categories-track {
+        display: flex;
+        gap: 20px;
+        transition: transform 0.5s ease;
+        height: 100%;
+    }
+
+    .category-card {
+        flex: 0 0 300px;
+        height: 200px;
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+    .category-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: brightness(0.7);
+        transition: filter 0.3s ease;
+    }
+
+    .category-card:hover .category-background {
+        filter: brightness(0.9);
+    }
+
+    .category-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        padding: 30px 20px 20px;
+    }
+
+    .category-title {
+        color: white;
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        margin: 0;
+    }
+
+    .category-count {
+        color: var(--steam-blue);
+        font-size: 0.9rem;
+        margin-top: 5px;
+        margin-bottom: 0;
+        opacity: 0.9;
+    }
+
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.7);
+        border: 2px solid var(--steam-blue);
+        color: var(--steam-blue);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+        z-index: 10;
+    }
+
+        .carousel-nav:hover {
+            background: var(--steam-blue);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-nav.prev {
+            left: 10px;
+        }
+
+        .carousel-nav.next {
+            right: 10px;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+
+    .indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .indicator.active {
+            background: var(--steam-blue);
+            transform: scale(1.2);
+        }
+
+    @@media (max-width: 768px) {
+        .categories-carousel {
+            margin: 0 20px;
+        }
+
+        .category-card {
+            flex: 0 0 250px;
+            height: 150px;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+        }
+
+        .carousel-nav {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .categories-header h2 {
+            font-size: 1.8rem;
+        }
+
+        .category-card {
+            flex: 0 0 200px;
+            height: 120px;
+        }
+
+        .category-title {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+    let currentSlide = 0;
+    const itemsPerSlide = 4; 
+    let totalItems = 0;
+    let maxSlides = 0;
+
+    function initializeCarousel() {
+        const track = document.getElementById('categoriesTrack');
+        if (!track) return;
+
+        totalItems = track.children.length;
+        maxSlides = Math.max(0, totalItems - itemsPerSlide);
+
+      
+        createIndicators();
+        updateCarousel();
+    }
+
+    function createIndicators() {
+        const indicatorsContainer = document.getElementById('carouselIndicators');
+        if (!indicatorsContainer) return;
+
+        indicatorsContainer.innerHTML = '';
+
+        
+        for (let i = 0; i <= maxSlides; i++) {
+            const indicator = document.createElement('div');
+            indicator.classList.add('indicator');
+            if (i === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => goToSlide(i));
+            indicatorsContainer.appendChild(indicator);
+        }
+    }
+
+    function updateCarousel() {
+        const track = document.getElementById('categoriesTrack');
+        if (!track) return;
+
+        
+        if (currentSlide < 0) currentSlide = 0;
+        if (currentSlide > maxSlides) currentSlide = maxSlides;
+
+      
+        const cardWidth = 300; 
+        const gap = 20; 
+        const translateX = -(currentSlide * (cardWidth + gap));
+
+        track.style.transform = `translateX(${translateX}px)`;
+
+        
+        document.querySelectorAll('.indicator').forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    function moveCarousel(direction) {
+        currentSlide += direction;
+
+        
+        if (currentSlide < 0) {
+            currentSlide = maxSlides;
+        } else if (currentSlide > maxSlides) {
+            currentSlide = 0;
+        }
+
+        updateCarousel();
+    }
+
+    function goToSlide(slideIndex) {
+        currentSlide = slideIndex;
+        updateCarousel();
+    }
+
+    function navigateToCategory(categoryName) {
+        window.location.href = `/Shop?category=${encodeURIComponent(categoryName)}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCarousel();
+
+        setInterval(() => {
+            moveCarousel(1);
+        }, 5000);
+    });
+
+    let startX = 0;
+    let isDragging = false;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.querySelector('.categories-carousel');
+        if (!carousel) return;
+
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+        });
+
+        carousel.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    moveCarousel(1); 
+                } else {
+                    moveCarousel(-1); 
+                }
+            }
+
+            isDragging = false;
+        });
+    });
+</script>
+
+
+@section Scripts {
+    <script>
+        let ownedGameIds = [];
+
+        fetch('/Cart/GetOwnedGameIds')
+            .then(response => response.json())
+            .then(data => {
+                ownedGameIds = data.ids;
+                console.log("Owned games IDs:", ownedGameIds);
+                disableOwnedGamesButtons();
+            })
+            .catch(error => {
+                console.error('Error fetching owned games:', error);
+            });
+
+        function disableOwnedGamesButtons() {
+            ownedGameIds.forEach(id => {
+                const btn = document.querySelector(`button[data-game-id="${id}"]`);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "In Library";
+                    btn.classList.add('disabled');
+                }
+            });
+        }
+
+        function AddToBasket(id) {
+            if (ownedGameIds.includes(id)) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Already Owned',
+                    text: 'You already own this game in your library.',
+                    confirmButtonColor: '#66c0f4'
+                });
+                return;
+            }
+
+            const button = document.querySelector(`button[data-game-id="${id}"]`);
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = 'Adding...';
+            }
+
+            $.ajax({
+                url: `/Cart/AddToBasket?id=${id}`,
+                type: "GET",
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to Cart!',
+                            text: 'Game successfully added to your cart.',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            confirmButtonColor: '#66c0f4'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: res.message || 'Failed to add to cart!',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Connection Error',
+                        text: 'Something went wrong! Please try again.',
+                        confirmButtonColor: '#dc3545'
+                    });
+                },
+                complete: function() {
+                    if (button) {
+                        button.disabled = false;
+                        button.innerHTML = 'Add to Cart';
+                    }
+                }
+            });
+        }
+    </script>
+}

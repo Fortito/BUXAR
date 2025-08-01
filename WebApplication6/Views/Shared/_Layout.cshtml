@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <title>Lugx Gaming Shop HTML5 Template</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="~/vendor//bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="~/assets//css/fontawesome.css">
+    <link rel="stylesheet" href="~/assets//css/templatemo-lugx-gaming.css">
+    <link rel="stylesheet" href="~/assets//css/owl.css">
+    <link rel="stylesheet" href="~/assets//css/animate.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
+
+    <!--
+
+    TemplateMo 589 lugx gaming
+
+    https://templatemo.com/tm-589-lugx-gaming
+
+    -->
+</head>
+
+<body>
+
+    <!-- ***** Preloader Start ***** -->
+    <div id="js-preloader" class="js-preloader">
+        <div class="preloader-inner">
+            <span class="dot"></span>
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <!-- ***** Preloader End ***** -->
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a href="/" class="logo">
+                            <img src="~/assets//images/logo.png" alt="" style="width: 158px;">
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            <li><a href="/" class="active">Home</a></li>                   
+                            <li><a href="/library/">Library</a></li>
+                            <li><a href="/cart/cart">Cart</a></li>
+                            
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li>
+                                    <a href="/admin">Admin</a>
+                                </li>
+                            }
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li>
+                                    <a href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
+                                </li>
+                            }
+
+                            else
+                            {
+                                <li>
+                                    <a href="/auth/login">Sign In</a>
+                                </li>
+                            }
+
+                           
+                            
+                        </ul>
+                      
+                        <a class='menu-trigger'>
+                            <span>Menu</span>
+                        </a>
+                       
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ***** Header Area End ***** -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="bg-dark text-light pt-4 pb-2">
+        <div class="container text-center">
+            <a href="/developer/apply" class="btn btn-outline-light mb-3">
+                Do you want to become a developer? Apply
+            </a>
+            <p class="mb-0">&copy; 2048 LUGX Gaming Company. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+
+
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Logout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are You Want Logout?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form method="post" action="/auth/logout">
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <!-- Bootstrap core JavaScript -->
+    <script src="~/vendor//jquery/jquery.min.js"></script>
+    <script src="~/vendor//bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets//js/isotope.min.js"></script>
+    <script src="~/assets//js/owl-carousel.js"></script>
+    <script src="~/assets//js/counter.js"></script>
+    <script src="~/assets//js/custom.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @await RenderSectionAsync("Scripts", required:false)
+    @RenderSection("Styles", required: false)
+
+    <!-- Logout Confirmation Modal -->
+</body>
+</html> 

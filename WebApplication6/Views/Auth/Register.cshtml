@@ -1,0 +1,71 @@
+﻿@model RegisterDto
+
+@{
+    Layout = "AuthLayout";
+}
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+  
+            <div class="row">
+
+                <div class="col-lg-5 d-flex flex-column justify-content-center align-items-center bg-dark text-center p-4">
+                    @if (ViewBag.Enter != null)
+                    {
+                        <img src="@ViewBag.Enter.PhotoUrl" alt="Image" style="max-width: 100%; border-radius: 15px;" />
+                        <h3 class="mt-4 text-danger" style="font-weight: bold;">@ViewBag.Enter.Title</h3>
+                        <p class="text-danger">@ViewBag.Enter.SubTitle</p>
+                    }
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                        </div>
+                        <form method="post">
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="text" asp-for="FirstName" class="form-control form-control-user" placeholder="First Name" required>
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="text" asp-for="LastName" class="form-control form-control-user" placeholder="Last Name" required>
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" asp-for="Email" class="form-control form-control-user" placeholder="Email Address" required>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="password" asp-for="Password" class="form-control form-control-user" placeholder="Password" required>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="password" asp-for="RepeatPassword" class="form-control form-control-user" placeholder="Repeat Password" required>
+                                    <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-user btn-block">
+                                Register Account
+                            </button>
+                            <hr>
+                            <a href="https://accounts.google.com/signin" class="btn btn-google btn-user btn-block">
+                                <i class="fab fa-google fa-fw"></i> Register with Google
+                            </a>
+                            <a href="https://www.facebook.com/login" class="btn btn-facebook btn-user btn-block">
+                                <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
+                            </a>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="small" asp-action="Login" asp-controller="Auth">Already have an account? Login!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

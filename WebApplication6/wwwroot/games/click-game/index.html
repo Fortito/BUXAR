@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Click Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: sans-serif;
+            margin-top: 50px;
+        }
+
+        #box {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        #score {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Click the Box!</h1>
+    <div id="box"></div>
+    <div id="score">Score: 0</div>
+
+    <script>
+        let score = 0;
+        const box = document.getElementById('box');
+        const scoreDisplay = document.getElementById('score');
+
+        function moveBox() {
+            const x = Math.floor(Math.random() * (window.innerWidth - 100));
+            const y = Math.floor(Math.random() * (window.innerHeight - 100));
+            box.style.position = 'absolute';
+            box.style.left = x + 'px';
+            box.style.top = y + 'px';
+        }
+
+        box.addEventListener('click', () => {
+            score++;
+            scoreDisplay.textContent = "Score: " + score;
+            moveBox();
+        });
+
+        moveBox();
+    </script>
+</body>
+</html>
