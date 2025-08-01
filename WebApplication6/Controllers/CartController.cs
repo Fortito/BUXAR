@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
@@ -95,52 +96,91 @@ namespace WebApplication6.Controllers
 
             return Json(gamesData);
         }
-
+  
         [HttpGet]
+        [Authorize]
         public IActionResult CheckOut()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckOut(Order order)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            order.UserId = userId;
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (!string.Equals(userEmail, order.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("Email", "You must use your account's email address.");
+                return View(order);
+            }
+
+
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Auth");
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return Unauthorized();
 
             var cartCookie = Request.Cookies["cart"];
-            var data = JsonSerializer.Deserialize<List<CartCookieDto>>(cartCookie);
-            var dataIds = data.Select(x => x.Id).ToList();
+            if (cartCookie == null)
+            {
+                ModelState.AddModelError("", "Your cart is empty.");
+                return View(order);
+            }
 
-          
-            var ownedGameIds = await _context.LibraryItems
+            var cartData = JsonSerializer.Deserialize<List<CartCookieDto>>(cartCookie);
+            if (cartData == null || !cartData.Any())
+            {
+                ModelState.AddModelError("", "No valid game found in your cart.");
+                return View(order);
+            }
+
+            var cartGameIds = cartData.Select(x => x.Id).ToList();
+
+
+            var userLibraryItems = await _context.LibraryItems
                 .Where(li => li.Library.UserId == userId)
-                .Select(li => li.GameId)
                 .ToListAsync();
 
-            var newGameIds = dataIds.Except(ownedGameIds).ToList();
+            var ownedGameIds = userLibraryItems.Select(x => x.GameId).ToList();
+            var newGameIds = cartGameIds.Except(ownedGameIds).ToList();
 
             if (!newGameIds.Any())
             {
-                
                 ModelState.AddModelError("", "You already own all the games in your cart.");
                 return View(order);
             }
 
-            var games = _context.games.Where(x => newGameIds.Contains(x.Id)).ToList();
+            var gamesToBuy = await _context.games
+                .Where(x => newGameIds.Contains(x.Id))
+                .Include(x => x.GameImages)
+                .Include(x => x.GameCatagories)
+                    .ThenInclude(gc => gc.Catagory)
+                .ToListAsync();
 
 
+            order.UserId = userId;
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
 
-            var orderItems = games.Select(game => new OrderItem
+            var orderItems = gamesToBuy.Select(game => new OrderItem
             {
                 OrderId = order.Id,
                 Name = game.Name,
                 Price = game.Price,
                 GameId = game.Id
             }).ToList();
+
             await _context.OrderItems.AddRangeAsync(orderItems);
 
             var library = new Library
@@ -152,7 +192,7 @@ namespace WebApplication6.Controllers
             await _context.Libraries.AddAsync(library);
             await _context.SaveChangesAsync();
 
-            var libraryItems = games.Select(game => new LibraryItem
+            var libraryItems = gamesToBuy.Select(game => new LibraryItem
             {
                 LibraryId = library.Id,
                 GameId = game.Id,

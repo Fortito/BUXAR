@@ -56,23 +56,43 @@
                 <div class="col-12">
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
-                        <a href="/" class="logo">
-                            <img src="~/assets//images/logo.png" alt="" style="width: 158px;">
+                        <a href="/" class="logo steam-logo">
+                            buXar
                         </a>
+
+                        <style>
+                            .steam-logo {
+                                font-size: 28px;
+                                font-weight: 700;
+                                color: #66c0f4;
+                                letter-spacing: 2px;
+                                text-decoration: none;
+                                transition: color 0.3s ease;
+                            }
+
+                                .steam-logo:hover {
+                                    color: #ffffff;
+                                }
+
+                            text-shadow: 0 0 5px rgba(102, 192, 244, 0.8);
+                        </style>
+
+
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
                             <li><a href="/" class="active">Home</a></li>                   
                             <li><a href="/library/">Library</a></li>
                             <li><a href="/cart/cart">Cart</a></li>
-                            
 
-                            @if (User.IsInRole("Admin"))
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Devoloper"))
                             {
                                 <li>
                                     <a href="/admin">Admin</a>
                                 </li>
                             }
+
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <li>
