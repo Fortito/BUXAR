@@ -1,316 +1,140 @@
-﻿const canvas = document.getElementById("gameCanvas");
+
+const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const levelInfo = document.getElementById("levelInfo");
 
-const GRAVITY = 0.5;
-const TILE_SIZE = 50;
+let gravity = 0.6;
+let friction = 0.8;
+let levelIndex = 0;
+let keys = {};
 
-let currentLevel = 0;
-let levels = [
-    [
-        "00000000000000000000",
-        "00000000000000200000",
-        "00000000000000110000",
-        "00000000000000000000",
-        "00000000110000000000",
-        "00000000000000000000",
-        "00001100000000000000",
-        "00000000000000000003",
-        "00000000000000000000",
-        "11110000111100011111",
-    ],
-    [
-        "00000000000000000000",
-        "00000000000000200000",
-        "00000000000000110000",
-        "00000000000000000000",
-        "00000000110000000000",
-        "00000000000000000000",
-        "00001100000000000000",
-        "00000000000000000403",
-        "00000000000000000000",
-        "11110000111100011111",
-    ],
-    [
-        "00000000000000000000",
-        "00000000000000000000",
-        "00000000000000200000",
-        "00000000000000110000",
-        "00000000000000000000",
-        "00000000110000000000",
-        "00000000000000000000",
-        "00001100000000000003",
-        "00000000000000000000",
-        "11110000111100011111",
-    ]
-];
+document.addEventListener("keydown", (e) => keys[e.key.toLowerCase()] = true);
+document.addEventListener("keyup", (e) => keys[e.key.toLowerCase()] = false);
 
-let level = levels[currentLevel];
+const playerImg = new Image();
+playerImg.src = "player.png";
+
 let player = {
-    x: 100,
-    y: 0,
-    width: 40,
-    height: 40,
-    vx: 0,
-    vy: 0,
-    speed: 4,
-    jump: -15,
-    grounded: false,
-    lives: 3
+    x: 50, y: 350, width: 30, height: 30,
+    vx: 0, vy: 0, jumping: false
 };
 
-let keys = {};
-let fallingPlatforms = [];
-let traps = [];
-let exitDoor = null;
-
-// Initialize game elements
-function initLevel() {
-    fallingPlatforms = [];
-    traps = [];
-    exitDoor = null;
-
-    for (let row = 0; row < level.length; row++) {
-        for (let col = 0; col < level[row].length; col++) {
-            const tile = level[row][col];
-            const x = col * TILE_SIZE;
-            const y = row * TILE_SIZE;
-
-            if (tile === "2") {
-                traps.push({ x, y, width: TILE_SIZE, height: TILE_SIZE });
-            } else if (tile === "3") {
-                exitDoor = { x, y, width: TILE_SIZE, height: TILE_SIZE };
-            } else if (tile === "4") {
-                fallingPlatforms.push({
-                    x,
-                    y,
-                    width: TILE_SIZE,
-                    height: TILE_SIZE,
-                    col,
-                    row,
-                    fallTimer: 0,
-                    falling: false,
-                    originalY: y
-                });
-            }
-        }
-    }
-    levelInfo.textContent = `Level: ${currentLevel + 1} | Lives: ${player.lives}`;
-}
-
-function drawRect(x, y, w, h, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, w, h);
-}
-
-function drawLevel() {
-    // Draw background
-    drawRect(0, 0, canvas.width, canvas.height, "#222");
-
-    // Draw platforms
-    for (let row = 0; row < level.length; row++) {
-        for (let col = 0; col < level[row].length; col++) {
-            const tile = level[row][col];
-            const x = col * TILE_SIZE;
-            const y = row * TILE_SIZE;
-
-            if (tile === "1") {
-                drawRect(x, y, TILE_SIZE, TILE_SIZE, "#555");
-            }
-        }
-    }
-
-    // Draw traps (spikes)
-    traps.forEach(trap => {
-        drawRect(trap.x, trap.y, trap.width, trap.height, "#e33");
-        // Draw spike pattern
-        ctx.fillStyle = "#f55";
-        ctx.beginPath();
-        ctx.moveTo(trap.x, trap.y + trap.height);
-        ctx.lineTo(trap.x + trap.width / 2, trap.y);
-        ctx.lineTo(trap.x + trap.width, trap.y + trap.height);
-        ctx.fill();
-    });
-
-    // Draw exit door
-    if (exitDoor) {
-        drawRect(exitDoor.x, exitDoor.y, exitDoor.width, exitDoor.height, "#0f0");
-        // Draw door details
-        ctx.fillStyle = "#0c0";
-        ctx.fillRect(exitDoor.x + 10, exitDoor.y + 5, 5, exitDoor.height - 10);
-        ctx.fillRect(exitDoor.x + exitDoor.width - 15, exitDoor.y + 5, 5, exitDoor.height - 10);
-    }
-
-    // Draw falling platforms
-    fallingPlatforms.forEach(fp => {
-        if (!fp.falling) {
-            drawRect(fp.x, fp.y, fp.width, fp.height, "#aaa");
-            // Draw cracks
-            ctx.strokeStyle = "#666";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(fp.x + 15, fp.y + 10);
-            ctx.lineTo(fp.x + 35, fp.y + 15);
-            ctx.moveTo(fp.x + 10, fp.y + 25);
-            ctx.lineTo(fp.x + 40, fp.y + 30);
-            ctx.stroke();
-        }
-    });
-}
-
-function getTile(x, y) {
-    const col = Math.floor(x / TILE_SIZE);
-    const row = Math.floor(y / TILE_SIZE);
-    if (row < 0 || row >= level.length || col < 0 || col >= level[0].length) return "0";
-    return level[row][col];
-}
-
-function checkCollision(obj1, obj2) {
-    return obj1.x < obj2.x + obj2.width &&
-        obj1.x + obj1.width > obj2.x &&
-        obj1.y < obj2.y + obj2.height &&
-        obj1.y + obj1.height > obj2.y;
-}
-
-function updatePlayer() {
-    // Horizontal movement
-    if (keys["ArrowLeft"] || keys["a"]) player.vx = -player.speed;
-    else if (keys["ArrowRight"] || keys["d"]) player.vx = player.speed;
-    else player.vx = 0;
-
-    // Jumping
-    if ((keys["ArrowUp"] || keys["w"] || keys[" "]) && player.grounded) {
-        player.vy = player.jump;
-        player.grounded = false;
-    }
-
-    // Apply velocity
-    player.x += player.vx;
-    player.y += player.vy;
-    player.vy += GRAVITY;
-
-    // Check for collisions with traps
-    traps.forEach(trap => {
-        if (checkCollision(player, trap)) {
-            playerHit();
-            return;
-        }
-    });
-
-    // Check for exit door collision
-    if (exitDoor && checkCollision(player, exitDoor)) {
-        nextLevel();
-        return;
-    }
-
-    // Platform collision detection
-    player.grounded = false;
-
-    // Check if player is on any platform
-    const bottomCenterX = player.x + player.width / 2;
-    const bottomCenterY = player.y + player.height + 1;
-    const tileUnder = getTile(bottomCenterX, bottomCenterY);
-
-    if (tileUnder === "1" || tileUnder === "4") {
-        player.vy = 0;
-        player.grounded = true;
-        player.y = Math.floor(bottomCenterY / TILE_SIZE) * TILE_SIZE - player.height;
-    }
-
-    // Check for falling platforms
-    fallingPlatforms.forEach(fp => {
-        if (!fp.falling &&
-            player.x + player.width > fp.x &&
-            player.x < fp.x + fp.width &&
-            player.y + player.height >= fp.y - 5 &&
-            player.y + player.height <= fp.y + 5) {
-
-            fp.falling = true;
-        }
-
-        if (fp.falling) {
-            fp.fallTimer++;
-            if (fp.fallTimer > 30) {
-                fp.y += 3; // Platform falls
-
-                // If player is on the falling platform, fall with it
-                if (player.x + player.width > fp.x &&
-                    player.x < fp.x + fp.width &&
-                    player.y + player.height >= fp.y - 5 &&
-                    player.y + player.height <= fp.y + 5) {
-
-                    player.y = fp.y - player.height;
-                }
-            }
-        }
-    });
-
-    // Boundary checks
-    if (player.x < 0) player.x = 0;
-    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-
-    // Fall out of screen
-    if (player.y > canvas.height + 100) {
-        playerHit();
-    }
-}
-
-function playerHit() {
-    player.lives--;
-    levelInfo.textContent = `Level: ${currentLevel + 1} | Lives: ${player.lives}`;
-
-    if (player.lives <= 0) {
-        alert("Game Over! Restarting...");
-        player.lives = 3;
-        currentLevel = 0;
-    }
-
-    resetPlayer();
-}
+const levels = [
+  {
+    platforms: [
+      {x: 0, y: 420, w: 800, h: 30},
+      {x: 150, y: 350, w: 100, h: 10},
+      {x: 300, y: 280, w: 100, h: 10},
+      {x: 500, y: 220, w: 100, h: 10}
+    ],
+    traps: [
+      {x: 400, y: 405, w: 20, h: 15},
+      {x: 600, y: 405, w: 20, h: 15}
+    ],
+    door: {x: 700, y: 180, w: 40, h: 40}
+  },
+  {
+    platforms: [
+      {x: 0, y: 420, w: 800, h: 30},
+      {x: 100, y: 330, w: 80, h: 10},
+      {x: 240, y: 260, w: 80, h: 10},
+      {x: 400, y: 200, w: 80, h: 10},
+      {x: 550, y: 150, w: 80, h: 10}
+    ],
+    traps: [
+      {x: 300, y: 405, w: 20, h: 15},
+      {x: 500, y: 405, w: 20, h: 15},
+      {x: 650, y: 405, w: 20, h: 15}
+    ],
+    door: {x: 700, y: 100, w: 40, h: 40}
+  }
+];
 
 function resetPlayer() {
-    player.x = 50;
-    player.y = 0;
-    player.vx = 0;
-    player.vy = 0;
-    initLevel();
+  player.x = 50;
+  player.y = 350;
+  player.vx = 0;
+  player.vy = 0;
 }
 
-function nextLevel() {
-    currentLevel++;
-    if (currentLevel >= levels.length) {
-        alert("Congratulations! You completed all levels! 🎉");
-        currentLevel = 0;
+function update() {
+  let level = levels[levelIndex];
+  if (keys["a"]) player.vx -= 0.5;
+  if (keys["d"]) player.vx += 0.5;
+  if ((keys["w"] || keys[" "]) && !player.jumping) {
+    player.vy = -12;
+    player.jumping = true;
+  }
+
+  player.vy += gravity;
+  player.x += player.vx;
+  player.y += player.vy;
+  player.vx *= friction;
+
+  level.platforms.forEach(p => {
+    if (player.x < p.x + p.w &&
+        player.x + player.width > p.x &&
+        player.y + player.height < p.y + 10 &&
+        player.y + player.height + player.vy >= p.y) {
+      player.y = p.y - player.height;
+      player.vy = 0;
+      player.jumping = false;
     }
-    level = levels[currentLevel];
+  });
+
+  level.traps.forEach(t => {
+    if (player.x < t.x + t.w &&
+        player.x + player.width > t.x &&
+        player.y < t.y + t.h &&
+        player.y + player.height > t.y) {
+      alert("☠️ Tələyə düşdün!");
+      resetPlayer();
+    }
+  });
+
+  const d = level.door;
+  if (player.x < d.x + d.w &&
+      player.x + player.width > d.x &&
+      player.y < d.y + d.h &&
+      player.y + player.height > d.y) {
+    levelIndex++;
+    if (levelIndex >= levels.length) {
+      alert("🎉 Bütün səviyyələr tamamlandı!");
+      levelIndex = 0;
+    }
     resetPlayer();
+  }
+
+  if (player.y > canvas.height) resetPlayer();
 }
 
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const level = levels[levelIndex];
 
-    drawLevel();
-    updatePlayer();
+  ctx.fillStyle = "#888";
+  level.platforms.forEach(p => ctx.fillRect(p.x, p.y, p.w, p.h));
 
-    // Draw player
-    drawRect(player.x, player.y, player.width, player.height, "#0af");
+  ctx.fillStyle = "crimson";
+  level.traps.forEach(t => ctx.fillRect(t.x, t.y, t.w, t.h));
 
-    // Draw player eyes
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(player.x + 10, player.y + 10, 8, 8);
-    ctx.fillRect(player.x + 22, player.y + 10, 8, 8);
+  ctx.fillStyle = "gold";
+  const d = level.door;
+  ctx.fillRect(d.x, d.y, d.w, d.h);
 
-    requestAnimationFrame(gameLoop);
+  ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px Arial";
+  ctx.fillText("Level: " + (levelIndex + 1), 20, 30);
 }
 
-// Event listeners
-document.addEventListener("keydown", e => {
-    keys[e.key] = true;
-    // Prevent spacebar from scrolling page
-    if (e.key === " ") e.preventDefault();
-});
-document.addEventListener("keyup", e => keys[e.key] = false);
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
 
-// Initialize and start game
-initLevel();
-gameLoop();
+playerImg.onload = () => {
+  resetPlayer();
+  loop();
+};

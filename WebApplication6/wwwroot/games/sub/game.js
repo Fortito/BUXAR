@@ -1,8 +1,8 @@
 ﻿const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Oyun parametrləri
-const lanes = [100, 200, 300]; // Daha geniş zolaqlar
+
+const lanes = [100, 200, 300];
 let gravity = 0.8;
 let gameSpeed = 5;
 let score = 0;
@@ -13,7 +13,7 @@ let obstacles = [];
 let distance = 0;
 let gameStarted = false;
 
-// Oyunçu parametrləri
+
 let player = {
     x: lanes[1],
     y: 400,
@@ -27,7 +27,7 @@ let player = {
     slideTimer: 0
 };
 
-// Kontroller (klaviatura)
+
 document.addEventListener("keydown", (e) => {
     if (isGameOver) return;
 
@@ -51,7 +51,6 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// Mobil üçün toxunma kontrolleri
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -102,7 +101,7 @@ canvas.addEventListener('touchend', (e) => {
     }
 });
 
-// Desktop üçün kliklə başlatma
+
 canvas.addEventListener('click', (e) => {
     if (isGameOver) {
         resetGame();
@@ -111,7 +110,7 @@ canvas.addEventListener('click', (e) => {
     }
 });
 
-// Maneələr
+
 const obstacleTypes = [
     { width: 40, height: 60, color: "#c00" },
     { width: 60, height: 40, color: "#a00" },
@@ -300,11 +299,11 @@ function drawGameOver() {
     ctx.fillStyle = "#fff";
     ctx.font = "36px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("OYUN BİTTİ", canvas.width / 2, canvas.height / 2 - 40);
-    ctx.fillText("Xal: " + score, canvas.width / 2, canvas.height / 2);
-    ctx.fillText("Rekord: " + highScore, canvas.width / 2, canvas.height / 2 + 40);
+    ctx.fillText("FINSH", canvas.width / 2, canvas.height / 2 - 40);
+    ctx.fillText("SCORE " + score, canvas.width / 2, canvas.height / 2);
+    ctx.fillText("Record: " + highScore, canvas.width / 2, canvas.height / 2 + 40);
     ctx.font = "24px Arial";
-    ctx.fillText("Yenidən başlamaq üçün toxunun", canvas.width / 2, canvas.height / 2 + 80);
+    ctx.fillText("AGAIN", canvas.width / 2, canvas.height / 2 + 80);
     ctx.textAlign = "left";
 }
 
@@ -319,11 +318,11 @@ function drawStartScreen() {
 
     ctx.fillStyle = "#fff";
     ctx.font = "24px Arial";
-    ctx.fillText("Başlamaq üçün toxunun", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("Start", canvas.width / 2, canvas.height / 2);
 
     ctx.font = "18px Arial";
-    ctx.fillText("↑ Tullanmaq | ↓ Sürüşmək", canvas.width / 2, canvas.height / 2 + 40);
-    ctx.fillText("← → Zolaq dəyişmək", canvas.width / 2, canvas.height / 2 + 70);
+    ctx.fillText("↑ Jump | ↓ ", canvas.width / 2, canvas.height / 2 + 40);
+    ctx.fillText("← → left and right", canvas.width / 2, canvas.height / 2 + 70);
     ctx.textAlign = "left";
 }
 
@@ -349,7 +348,6 @@ function loop() {
     requestAnimationFrame(loop);
 }
 
-// Oyunu başlat
 resetGame();
 gameStarted = false;
 loop();
